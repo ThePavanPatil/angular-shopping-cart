@@ -11,31 +11,33 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log('hi');
   }
 
   customOptions: OwlOptions = {
     loop: true,
-    mouseDrag: false,
-    touchDrag: false,
-    pullDrag: false,
     dots: false,
-    navSpeed: 700,
+    animateIn: 'fadeIn',
+    animateOut: 'fadeOut',
+    autoplay: true,
     navText: ['', ''],
-    responsive: {
-      0: {
-        items: 1
+    responsive:{
+      0:{
+        items:1
       },
-      400: {
-        items: 2
+      600:{
+        items:1
       },
-      740: {
-        items: 3
-      },
-      940: {
-        items: 4
+      1000:{
+        items:1
       }
     },
-    nav: true
+    nav: false
   }
+
+  slidesStore = [
+    { id: 'slide-1', h1: 'We serve Fresh Vegestables & Fruits', h2:'We deliver organic vegetables & fruits', link: 'products', image: 'assets/images/bg_1.jpg'},
+    { id: 'slide-2', h1: '100% Fresh & Organic Foods', h2:'We deliver organic vegetables & fruits', link: 'products', image: 'assets/images/bg_2.jpg'},
+  ];
 
 }
