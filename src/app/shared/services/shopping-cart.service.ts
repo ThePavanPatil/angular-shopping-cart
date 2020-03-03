@@ -18,6 +18,7 @@ export class ShoppingCartService {
   quantity: number;
   items = [];
   clearCart: boolean;
+  deliveryCharge = 5;
 
   constructor() { 
     this.shoppingCart('Town');
@@ -52,11 +53,15 @@ export class ShoppingCartService {
     });
   }
 
-  cartItem(categoryid, productid, quantity) {
+  cartItem(item, quantity) {
     return {
-      categoryid : categoryid,
-      productid : productid,
-      quantity : quantity * 1
+      categoryid : item.categoryid,
+      productid : item.productid,
+      name : item.name,
+      quantity : quantity * 1,
+      image : item.image,
+      price : item.price,
+      list_price : item.list_price
     }
   }
 
@@ -74,7 +79,7 @@ export class ShoppingCartService {
                 var item = items[i];
                 if (item.categoryid !== null && item.productid !== null && item.quantity !== null) {
                   /*jshint newcap:false*/
-                    item = this.cartItem(item.categoryid, item.productid, item.quantity);
+                    item = this.cartItem(item, item.quantity);
                     this.items.push(item);
                 }
             }
@@ -97,7 +102,21 @@ export class ShoppingCartService {
   };
 
   getCart() {
-		return localStorage[this.cartName + "_cart"];
+    var products = [];
+    for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        //var ctr = i + 1;
+        products.push({
+            categoryid: item.categoryid,
+            productid: item.productid,
+            name : item.name,
+            quantity: item.quantity,
+            image : item.image,
+            price : item.price,
+            list_price : item.list_price
+        });
+    }
+    return products;
   }
 
   getSku (){
@@ -126,12 +145,11 @@ export class ShoppingCartService {
           build = item.quantity;
       }
     });
-    console.log(build);
     return build;
   };
   
-  addItem  (categoryid, productid, quantity) {
-    console.log(productid);
+  addItem  (itemData, quantity) {
+  
     quantity = this.toNumber(quantity);
     if (quantity !== 0) {
   
@@ -139,7 +157,7 @@ export class ShoppingCartService {
         var found = false;
         for (var i = 0; i < this.items.length && !found; i++) {
             var item = this.items[i];
-            if (item.productid === productid && item.categoryid === categoryid) {
+            if (item.productid === itemData.productid && item.categoryid === itemData.categoryid) {
                 found = true;
                 item.quantity = this.toNumber(item.quantity + quantity);
                 if (item.quantity <= 0) {
@@ -152,7 +170,7 @@ export class ShoppingCartService {
         // new item, add now
         if (!found) {
           /*jshint newcap:false*/
-            var itemnot = this.cartItem(categoryid, productid, quantity);
+            var itemnot = this.cartItem(itemData, quantity);
             this.items.push(itemnot);
         }
   
@@ -161,7 +179,7 @@ export class ShoppingCartService {
     }
   };
 
-  addItemreplace  (categoryid, sku, quantity) {
+  addItemreplace  (itemData, quantity) {
     quantity = this.toNumber(quantity);
     if (quantity !== 0) {
   
@@ -169,7 +187,7 @@ export class ShoppingCartService {
         var found = false;
         for (var i = 0; i < this.items.length && !found; i++) {
             var item = this.items[i];
-            if (item.sku === sku && item.categoryid === categoryid) {
+            if (item.productid === itemData.productid && item.categoryid === itemData.categoryid) {
                 found = true;
                 item.quantity = this.toNumber(quantity);
                 if (item.quantity <= 0) {
@@ -182,7 +200,7 @@ export class ShoppingCartService {
         // new item, add now
         if (!found) {
           /*jshint newcap:false*/
-            var itemnot = this.cartItem(categoryid, sku, quantity);
+            var itemnot = this.cartItem(itemData, quantity);
             this.items.push(itemnot);
         }
   
@@ -210,6 +228,28 @@ export class ShoppingCartService {
     }
     return count;
   };
+
+  // get the total price for all items in the cart
+  getSubTotalPrice () {
+    var total = 0;
+    for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        total += this.toNumber(item.quantity * item.list_price);
+    }
+    return total;
+  }
+
+  getTotalPrice () {
+    var total = 0;
+    if(this.deliveryCharge>0){
+      total += this.deliveryCharge;
+    }
+    for (var i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        total += this.toNumber(item.quantity * item.list_price);
+    }
+    return total;
+  }
 
   toNumber (value) {
     value = value * 1;
