@@ -38,12 +38,13 @@
                         </div>
                         <div class="bottom-area d-flex px-3 product-icon" >
                             <div class="m-auto d-flex">
-                                <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                                <span class="buy-now d-flex justify-content-center align-items-center mx-1" (click)="cart.addItem(101, item.id, 1);">
                                     <span>+</span>
-                                </a>
-                                <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                                </span>
+                                &nbsp;&nbsp;&nbsp;{{cart.getItemBysku(101, item.id)}}&nbsp;&nbsp;&nbsp;
+                                <span href="#" class="heart d-flex justify-content-center align-items-center " (click)="cart.addItem(101, item.id, -1);"> 
                                     <span>-</span>
-                                </a>
+                                </span>
                             </div>
                         </div>
                     </div>
